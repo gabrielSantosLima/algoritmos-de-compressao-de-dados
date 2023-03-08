@@ -4,9 +4,6 @@
 #define BUFFER_SIZE 20
 #define LOOKAHEAD_SIZE 15
 
-
-
-
 typedef struct
 {
     int distancia;
@@ -14,34 +11,32 @@ typedef struct
     char prox;
 } Tupla;
 
-
-
-
 int compressao(char *entrada, int tam_entrada, Tupla *saida)
 {
     int i = 0, k = 0;
-   
+
     while (i < tam_entrada)
     {
         int tam_max = 0;
         int distancia_max = 0;
-       
+
         // percorre a frase de acordo com a distancia dos caracteres
-        for (int distancia = 1; distancia <= i; distancia++) {
-           
+        for (int distancia = 1; distancia <= i; distancia++)
+        {
+
             int tam = 0;
-           
-           // verifica se há repetição de caracteres
+
+            // verifica se há repetição de caracteres
             while (entrada[i + tam] == entrada[i - distancia + tam])
                 tam++;
-           
+
             if (tam > tam_max)
             {
                 tam_max = tam;
                 distancia_max = distancia;
             }
         }
-       
+
         // inserindo na tupla, informações de elementos repetidos no dic
         if (tam_max > 0)
         {
@@ -50,7 +45,7 @@ int compressao(char *entrada, int tam_entrada, Tupla *saida)
             saida[k].prox = entrada[i + tam_max];
             i += tam_max + 1;
         }
-       
+
         // inserindo na tupla, informações de elementos que não estão no dic
         else
         {
@@ -61,24 +56,20 @@ int compressao(char *entrada, int tam_entrada, Tupla *saida)
         }
         k++;
     }
-   
+
     // retorna as tuplas - compressao da frase
     for (int i = 0; i < k; i++)
         printf("(%d, %d, %c) ", saida[i].distancia, saida[i].tamanho, saida[i].prox);
-   
-    printf("\n");
 
+    printf("\n");
 
     return k;
 }
 
-
-
-
 int decompressao(Tupla *entrada, int tam_entrada, char *saida)
 {
     int i = 0, j = 0;
-   
+
     while (i < tam_entrada)
     {
         // se o caracter ainda nao estava no dicionario
@@ -88,17 +79,18 @@ int decompressao(Tupla *entrada, int tam_entrada, char *saida)
             i++;
             j++;
         }
-       
+
         // caso o caracter ja esteja no dicionario (repeticao)
         else
         {
             int tam = j - entrada[i].distancia;
-           
-            for (int l = 0; l < entrada[i].tamanho; l++) {
+
+            for (int l = 0; l < entrada[i].tamanho; l++)
+            {
                 saida[j] = saida[tam + l]; // retorna o caracter repetido
                 j++;
             }
-           
+
             // retorna o caracter que foi adicionado junto com o caracter repetido
             saida[j] = entrada[i].prox;
             i++;
@@ -108,29 +100,23 @@ int decompressao(Tupla *entrada, int tam_entrada, char *saida)
     return j;
 }
 
-
-
-
 int main()
 {
     char entrada[BUFFER_SIZE];
     Tupla saida[BUFFER_SIZE];
     char decompressado[BUFFER_SIZE];
 
-
     printf("Digite uma frase: ");
     fgets(entrada, BUFFER_SIZE, stdin);
-   
+
     int tam_entrada = strlen(entrada);
     entrada[tam_entrada] = '\0';
-   
+
     printf("Compressao: ");
     int tam_tupla = compressao(entrada, tam_entrada, saida);
 
-
     decompressao(saida, tam_tupla, decompressado);
     printf("Decompressao: %s", decompressado);
-
 
     return 0;
 }
