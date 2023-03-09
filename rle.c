@@ -3,6 +3,7 @@
 #include <string.h>
 #define MAX 9
 
+// Transforma um int em um char
 char int_to_char(int value)
 {
     return (char)value;
@@ -10,8 +11,8 @@ char int_to_char(int value)
 
 typedef struct node
 {
-    int length;
-    char digit;
+    int length; // Representa o tamanho da carreira
+    char digit; // Representa o caractere
     struct node *next;
 } node;
 
@@ -21,6 +22,7 @@ typedef struct list
     int length;
 } list;
 
+// Cria uma nova lista
 list *new_list()
 {
     list *nlist = (list *)malloc(sizeof(list));
@@ -29,6 +31,7 @@ list *new_list()
     return nlist;
 }
 
+// Adiciona um novo nó
 node *new_node(int length, char digit)
 {
     node *nnode = (node *)malloc(sizeof(node));
@@ -38,6 +41,7 @@ node *new_node(int length, char digit)
     return nnode;
 }
 
+// Adiciona uma carreira na lista
 void add_2_list(list *nlist, int length, char digit)
 {
     node *nnode = new_node(length, digit);
@@ -54,6 +58,8 @@ void add_2_list(list *nlist, int length, char digit)
     nlist->length++;
 }
 
+// Transforma uma lista encadeada em string concatenando o tamanho e o respectivo caractere de cada
+// carreira
 char *list_2_encoding(list *nlist)
 {
     if (nlist->length == 0)
@@ -71,35 +77,42 @@ char *list_2_encoding(list *nlist)
     return encoding;
 }
 
+// Algoritmo Run-Length Encoding
 char *RLE(char *text)
 {
+    // Criamos uma lista auxiliar para armazenar as carreiras
     list *encoding = new_list();
     int size = strlen(text);
     char digit = text[0];
     int length = 1;
 
+    // Percorremos o texto completo
     for (int index = 1; index < size; index++)
     {
+        // Verificamos se o dígito atual é igual ao anterior
         if (text[index] == digit && length < MAX)
         {
+            // Incrementamos o valor representando a quantidade de caracteres que se repetem
             length++;
             if (index == size - 1)
                 add_2_list(encoding, length, digit);
         }
         else
         {
+            // Caso seja diferente, adicionamos a carreira a lista
             add_2_list(encoding, length, digit);
             digit = text[index];
             length = 1;
         }
     }
+    // Por fim, concatenamos essa lista de carreiras para string
     return list_2_encoding(encoding);
 }
 
 int main()
 {
     char *text = "aaaaabbcc";
-    char *compressed_text = RLE(text);
+    char *compressed_text = RLE(text); // Aplicamos o algoritmo no texto para compressão dos dados
     printf("Texto original: %s\n", text);
     printf("Texto comprimido: %s\n", compressed_text);
     printf("Tamanho do texto original (bytes): %d\n", strlen(text));
